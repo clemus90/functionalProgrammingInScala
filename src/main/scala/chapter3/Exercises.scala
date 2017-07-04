@@ -121,6 +121,21 @@ object Exercises {
       foldLeft(lst, List():List[A])(append)
     }
 
+    /**
+      * Exercise 3.16
+      */
+    def addOne(lst: List[Int]):List[Int] = {
+      foldRight(lst, Nil:List[Int])((x, xs) => Cons(x + 1 , xs))
+    }
+
+    def doubleToString(lst: List[Double]):List[String] = {
+      foldRight(lst, Nil:List[String])((h,t) => Cons(h.toString, t))
+    }
+
+    def map[A,B](as: List[A])(f: A => B): List[B] = {
+      foldRight(as, Nil:List[B])((h, t) => Cons(f(h), t))
+    }
+
   }
 
   /**
