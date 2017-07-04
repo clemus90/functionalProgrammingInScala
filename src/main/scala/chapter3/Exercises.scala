@@ -128,13 +128,36 @@ object Exercises {
       foldRight(lst, Nil:List[Int])((x, xs) => Cons(x + 1 , xs))
     }
 
+    /**
+      * Exercise 3.17
+      */
     def doubleToString(lst: List[Double]):List[String] = {
       foldRight(lst, Nil:List[String])((h,t) => Cons(h.toString, t))
     }
 
+    /**
+      * Exercise 3.18
+      */
     def map[A,B](as: List[A])(f: A => B): List[B] = {
       foldRight(as, Nil:List[B])((h, t) => Cons(f(h), t))
     }
+
+    /**
+      * Exercise 3.19
+     */
+    def filter[A](as: List[A])(f: A => Boolean): List[A] = {
+      foldRight(as, Nil:List[A])((h,t) => {
+        if (f(h)) Cons(h, t) else t
+      })
+    }
+
+    /**
+      * Exercise 3.20
+      */
+    def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] = {
+      concat(map(as)(f))
+    }
+
 
   }
 
