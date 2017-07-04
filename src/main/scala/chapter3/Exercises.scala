@@ -158,7 +158,17 @@ object Exercises {
       concat(map(as)(f))
     }
 
+    /**
+      * Exercise 3.21
+      */
+    def filterUsingFlatMap[A](as:List[A])(f: A => Boolean): List[A] = {
+      flatMap(as)((x) => if(f(x))List(x) else Nil)
+    }
 
+    /**
+      * Exercise 3.22
+      */
+    def addPairs(lst1: List[Int], lst2: List[Int]): List[Int] = ???
   }
 
   /**
