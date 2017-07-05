@@ -168,7 +168,33 @@ object Exercises {
     /**
       * Exercise 3.22
       */
-    def addPairs(lst1: List[Int], lst2: List[Int]): List[Int] = ???
+    def addPairs(lst1: List[Int], lst2: List[Int]): List[Int] = (lst1, lst2) match {
+      case (_ , Nil) => Nil
+      case (Nil, _) => Nil
+      case (Cons(h1, t1), Cons(h2, t2)) => Cons(h1 + h2, addPairs(t1, t2))
+    }
+
+    /**
+      * Exercise 3.23
+      */
+    def zipWith[A,B,C](as:List[A], bs:List[B])(f:(A,B) => C): List[C] = (as, bs) match {
+      case(_, Nil) => Nil
+      case (Nil, _) => Nil
+      case (Cons(h1,t1), Cons(h2,t2)) => Cons(f(h1,h2), zipWith(t1,t2)(f))
+    }
+
+    /**
+      * Exercise 3.24
+      */
+    def hasSubsequence[A](original:List[A], sub:List[A]):Boolean = (original, sub) match {
+      case (_, Nil) => true
+      case (Nil, _) => false
+      case (Cons(h1, t1), Cons(h2, t2)) => if(h1 == h2){
+        hasSubsequence(t1, t2)
+      }else {
+        hasSubsequence(t1, sub)
+      }
+    }
   }
 
   /**
