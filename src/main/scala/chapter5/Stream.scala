@@ -43,16 +43,32 @@ trait Stream[+A] {
   }
 
   def takeWhile(p: A => Boolean): Stream[A] = this match {
-    case Cons(h, t) if (p(h())) => t().takeWhile(p)
+    case Cons(h, t) if (p(h())) => cons(h(), t().takeWhile(p))
     case _ => this
   }
 
-  def forAll(p: A => Boolean): Boolean = ???
+  def takeWhileUsingFold(p: A => Boolean): Stream[A] =
+    foldRight(empty[A])((a, b) => if (p(a)) cons(a, b) else empty)
 
-  def headOption: Option[A] = ???
+  def forAll(p: A => Boolean): Boolean =
+    foldRight(true)((a, b) => p(a) && b )
+
+  def headOption: Option[A] =
+    foldRight[Option[A]](None)((h,_) => Some(h))
 
   // 5.7 map, filter, append, flatmap using foldRight. Part of the exercise is
   // writing your own function signatures.
+  def map[B](f: A => B): Stream[B] =
+  foldRight(empty[B])((h,t) => cons(f(h), t))
+
+  def filter[B](f: A => Boolean): Stream[A] =
+    foldRight(empty[A])((h, t) => if(f(h)) cons(h,t) else t)
+
+  def append[B>:A](s: => Stream[B]): Stream[B] =
+    foldRight(s)((h,t) => cons(h,t))
+
+  def flatMap[B](f: A => Stream[B]): Stream[B] =
+    foldRight(empty[B])((h,t) => f(h).append(t))
 
   def startsWith[B](s: Stream[B]): Boolean = ???
 }
@@ -73,7 +89,25 @@ object Stream {
     else cons(as.head, apply(as.tail: _*))
 
   val ones: Stream[Int] = Stream.cons(1, ones)
-  def from(n: Int): Stream[Int] = ???
 
-  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = ???
+  def constant[A](a: A): Stream[A] = {
+    lazy val tail:Stream[A] = Cons(() => a, () => tail)
+    tail
+  }
+  def from(n: Int): Stream[Int] = cons(n , from(n+1))
+
+  def fibs(): Stream[Int] = {
+    def loop(current: Int, nMinus1: Int): Stream[Int] = cons(current, loop(current + nMinus1, current))
+    cons(0, cons (1, loop(1 + 0, 1)))
+  }
+
+  def unfold[A, S](z: S)(f: S => Option[(A, S)]): Stream[A] = f(z) match {
+    case Some((h,s)) => cons(h, unfold(s)(f))
+    case None => empty
+  }
+
+  def fibsUnfold(): Stream[Int] = unfold(0,1){case (c,n) => Some(c,(n, n+c))}
+  def fromUnfold(n: Int): Stream[Int] = unfold(n)(x => Some(x, x+1))
+  def constantUnfold[A](n: A): Stream[A] = unfold(n)(x => Some(x,x))
+  def onesUnfold(): Stream[Int] = unfold(1)(_ => Some(1,1))
 }
